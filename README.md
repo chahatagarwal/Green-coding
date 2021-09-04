@@ -1,6 +1,7 @@
-#Green Coding
+Green Coding
 This repository is just for learning/experimental purpose in order to try something different and be habitual for day to day routines
 
+Reference
 @article{codecarbon,
   author={Victor Schmidt and Kamal Goyal and Aditya Joshi and Boris Feld and Liam Conell and Nikolas Laskaris and Doug Blank and Jonathan Wilson and Sorelle Friedler and Sasha Luccioni},
   title={{CodeCarbon: Estimate and Track Carbon Emissions from Machine Learning Computing}},
@@ -10,7 +11,7 @@ This repository is just for learning/experimental purpose in order to try someth
   publisher={Zenodo},
 }
 
-Dependencies:
+Dependencies
 Create a virtual environment using conda for easier management of dependencies and packages. 
 For installing conda, follow the instructions on the official conda website
 
@@ -19,7 +20,7 @@ For installing conda, follow the instructions on the official conda website
 
 Then install codecarbon from PyPI repository
 -> pip install codecarbon
-(OR)
+          (OR)
 Install from Conda repository
 -> conda install -c codecarbon -c conda-forge codecarbon.
 
@@ -27,22 +28,21 @@ Install from Conda repository
 Infrastructure Support
 Currently the package supports following hardware infrastructure.
 
-GPU
+- GPU
 Tracks Nvidia GPUs power consumption using pynvml library, (which is installed with the package).
 
-CPU
+- CPU
 On Windows and Mac
 Tracks Intel processors power consumption using the Intel Power Gadget
-
 You need to install it independently for CodeCarbon to function.
 Note: Please ensure that the Intel Power Gadget has the required security permissions on MacOS.
 
-On Linux
+- On Linux
 Tracks Intel Processors power consumption from Intel RAPL files at /sys/class/powercap/intel-rapl
 All CPUs listed in this directory will be tracked. Help us improve this and make it configurable.
 Note: The Power Consumption will be tracked only if the RAPL files exist at the above mentioned path.
 
-On all platforms
+- On all platforms
 If CodeCarbon cannot find the appropriate software to track the CPUs' energy consumption, it will use a fallback strategy:
 
 Find TDP:
@@ -83,48 +83,3 @@ Processor: Intel Core i7-1065
 
 I will be trying different Algorithm & Approach in Machine Learning. I will use the same repository to verify the Co2 emission accross different cities to start with from india.
 Please find the Tabular data for your inference and try finding if you could find some meaningful insights :)
-
-Callback Approach including flush():
-import tensorflow as tf
-from tensorflow.keras.callbacks import Callback
-from codecarbon import EmissionsTracker
-
-"""
-This sample code shows how to use CodeCarbon as a Keras Callback
-to save emissions after each epoch.
-"""
-
-class CodeCarbonCallBack(Callback):
-    def __init__(self, codecarbon_tracker):
-        self.codecarbon_tracker = codecarbon_tracker
-        pass
-
-    def on_epoch_end(self, epoch, logs=None):
-        self.codecarbon_tracker.flush()
-
-
-mnist = tf.keras.datasets.mnist
-
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train, x_test = x_train / 255.0, x_test / 255.0
-
-
-model = tf.keras.models.Sequential(
-    [
-        tf.keras.layers.Flatten(input_shape=(28, 28)),
-        tf.keras.layers.Dense(128, activation="relu"),
-        tf.keras.layers.Dropout(0.2),
-        tf.keras.layers.Dense(10),
-    ]
-)
-
-loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-
-model.compile(optimizer="adam", loss=loss_fn, metrics=["accuracy"])
-
-tracker = EmissionsTracker()
-tracker.start()
-codecarbon_cb = CodeCarbonCallBack(tracker)
-model.fit(x_train, y_train, epochs=4, callbacks=[codecarbon_cb])
-emissions: float = tracker.stop()
-print(f"Emissions: {emissions} kg")

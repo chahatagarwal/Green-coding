@@ -1,5 +1,5 @@
 # Sound-Classification
-This repository has a Jupyter Notebook consisting of different ways to approach and break the ice with the pre-assumptions/Hypothesis to achieve better accuracy
+This repository has a Jupyter Notebook consisting of different ways to approach and break the hypothesis in order to achieve better accuracy
 
 NOTE:
 1) Change path for the input dataset
